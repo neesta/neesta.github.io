@@ -1,0 +1,20 @@
+:root {
+    --blk: rgba(0,0,0,0.5);
+}
+
+@font-face {
+    font-family: Goldplay;
+    src: url("../fonts/Latinotype - Goldplay Light.otf") format("opentype");
+}
+
+*, *:before, *:after { box-sizing: border-box; }
+
+html {margin: 0; padding: 0; height: 100%; color: white; background: var(--blk) ; background-size: cover;}
+
+body {margin: 0; padding: 0; background:var(--blk) ; background-size: cover;}
+
+h1 { font: 35px "Goldplay",Helvetica,Arial, serif; font-weight: 400; text-align: center; color:rgba(255,255,255,1);  position: relative;}
+
+#container { margin:0;padding:0;display:grid; align-items:center; height:100vh;}
+
+#shit { cursor: pointer;}
