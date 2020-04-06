@@ -1,5 +1,6 @@
 :root {
-    --blk: rgba(0,0,0,0.5);
+    --bg: rgba(51, 63, 72,1);
+    --txt: rgba(255,255,255,1);
 }
 
 @font-face {
@@ -9,12 +10,16 @@
 
 *, *:before, *:after { box-sizing: border-box; }
 
-html {margin: 0; padding: 0; height: 100%; color: white; background: var(--blk) ; background-size: cover;}
+html {margin: 0; padding: 0; height: 100vh; color:var(--txt); background: var(--bg) ; background-size: cover;}
 
-body {margin: 0; padding: 0; background:var(--blk) ; background-size: cover;}
+body {margin: 0; padding: 0; background:var(--bg) ; background-size: cover;}
 
-h1 { font: 35px "Goldplay",Helvetica,Arial, serif; font-weight: 400; text-align: center; color:rgba(255,255,255,1);  position: relative;}
+#container { margin:0;padding:0;display:grid; align-items:center; height:100vh;position:relative;}
 
-#container { margin:0;padding:0;display:grid; align-items:center; height:100vh;}
+#shit, #shit_shadow {font: 50px "Goldplay",Helvetica,Arial, serif; font-weight: 900; text-align: center; cursor: pointer; position: absolute;width:100vw;margin:0 auto;}
 
-#shit { cursor: pointer;}
+#shit {z-index: 20;color:var(--txt); }
+
+#shit_shadow { z-index:10;position:relativel; color: "#000000";filter: blur(2px);}
+
+#grad { z-index:1; opacity:0; background: rgb(255,254,0); background: radial-gradient(circle, rgba(255,255,150,1) 0%, rgba(255,150,150,0.2) 50%, rgba(255,0,150,0) 100%); width:100vw; height:100vh;}
