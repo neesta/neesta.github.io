@@ -29,8 +29,8 @@
             gsap.to(grad, { opacity:.5, duration:3, background:"radial-gradient(circle, rgba(0, 0, 0, 0.5) 0%, rgba(0, 150, 150, 0.2) 50%, rgba(255, 0, 150, 0) 100%)"});
         }        
     }
-    gsap.from(s1, { rotation: getRandom(10, 180), scale:"+=2", y: "-=1000", duration:5, ease:"elastic.out( 1, 0.3)", delay:0.75 });
-    gsap.from(s2, { rotation: getRandom(10, 180), scale:"+=2",opacity:0, y: "-=1000", duration: 5, ease: "elastic.out( 1, 0.3)", delay: 1 });
+    gsap.from(s1, { scale: "+=2", opacity: 0, duration:4, ease:"elastic.out( 1, 0.3)", delay:0.75 });
+    gsap.from(s2, { scale:"+=2",opacity:0, duration:4, ease: "elastic.out( 1, 0.3)", delay:.75 });
 
     s1.addEventListener('click', function(e){
         gsap.to([s1, s2], { opacity: 0, onComplete: function () { toggleClick(e);} });
