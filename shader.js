@@ -13555,6 +13555,6 @@ global.CANVAS_SKETCH_DEFAULT_STORAGE_KEY = window.location.href;
 },{}]},{},[9,11])
 
 //# sourceMappingURL=shader.js.map
-window.addEventListener('click', (e) => {
-    window.location = "./index.html";
+document.addEventListener('click', (e) => {
+    document.location = "./index.html";
 })
