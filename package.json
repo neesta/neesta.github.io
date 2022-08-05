@@ -4,17 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tailwindcss -i ./input.css -o ./assets/css/main.css",
+    "watch": "tailwindcss -i ./input.css -o ./assets/css/main.css --watch"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bezier-easing": "^2.1.0",
-    "canvas-sketch": "^0.7.4",
-    "canvas-sketch-util": "^1.10.0",
-    "eases": "^1.0.8",
-    "nice-color-palettes": "^3.0.0",
-    "three": "^0.126.1"
+    "gsap": "^3.10.4"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.1.8"
   }
 }
