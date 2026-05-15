@@ -371,19 +371,32 @@
 		for (let i = 0; i < 3; i++) autoSplat();
 		setInterval(autoSplat, 7000);
 
-		let lastMouse = null;
-		window.addEventListener('mousemove', e => {
-			const nx = e.clientX / W;
-			const ny = e.clientY / H;
-			const c  = colorFromPos(nx, ny);
-			if (lastMouse) {
-				const dx = (e.clientX - lastMouse.x) * CFG.SPLAT_F * 0.15;
-				const dy = (e.clientY - lastMouse.y) * CFG.SPLAT_F * 0.15;
-				splat(e.clientX, e.clientY, dx, dy, c);
+		let lastPointer = null;
+
+		function onMove(x, y) {
+			const c = colorFromPos(x / W, y / H);
+			if (lastPointer) {
+				const dx = (x - lastPointer.x) * CFG.SPLAT_F * 0.15;
+				const dy = (y - lastPointer.y) * CFG.SPLAT_F * 0.15;
+				splat(x, y, dx, dy, c);
 			}
-			lastMouse = { x: e.clientX, y: e.clientY };
-		});
-		window.addEventListener('mouseleave', () => { lastMouse = null; });
+			lastPointer = { x, y };
+		}
+
+		window.addEventListener('mousemove', e => onMove(e.clientX, e.clientY));
+		window.addEventListener('mouseleave', () => { lastPointer = null; });
+
+		window.addEventListener('touchstart', e => {
+			const t = e.touches[0];
+			lastPointer = { x: t.clientX, y: t.clientY };
+		}, { passive: true });
+
+		window.addEventListener('touchmove', e => {
+			e.preventDefault();
+			for (const t of e.touches) onMove(t.clientX, t.clientY);
+		}, { passive: false });
+
+		window.addEventListener('touchend', () => { lastPointer = null; });
 
 		let prev = performance.now();
 		function animate(now) {
