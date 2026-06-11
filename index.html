@@ -47,10 +47,12 @@
 			return [r + m, g + m, b + m];
 		}
 
-		// Returns a muted color from mouse position (or time for auto-splats)
+		let globalHueShift = Math.random() * 360;
+
+		// Returns a subtle muted color from mouse position — narrow hue range, low saturation
 		function colorFromPos(nx, ny) {
-			const hue = nx * 360;
-			const sat = 0.35 + ny * 0.15;
+			const hue = (globalHueShift + (nx - 0.5) * 30 + (ny - 0.5) * 20) % 360;
+			const sat = 0.12 + ny * 0.06;
 			return hsl(hue, sat, 0.13);
 		}
 
@@ -359,8 +361,8 @@
 		}
 
 		function autoSplat() {
-			autoHue = (autoHue + 18 + Math.random() * 24) % 360;
-			const c = hsl(autoHue, 0.3, 0.13);
+			autoHue = (autoHue + 3 + Math.random() * 5) % 360;
+			const c = hsl(autoHue, 0.14, 0.12);
 			const x = W * (0.25 + Math.random() * 0.5);
 			const y = H * (0.25 + Math.random() * 0.5);
 			const a = Math.random() * Math.PI * 2;
@@ -398,9 +400,89 @@
 
 		window.addEventListener('touchend', () => { lastPointer = null; });
 
+		// ── Pixel rain ──────────────────────────────────────────────────────────
+		let mode = 'webgl';
+		const rainCanvas = document.createElement('canvas');
+		rainCanvas.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;display:none;cursor:none;';
+		document.body.appendChild(rainCanvas);
+		const rc = rainCanvas.getContext('2d');
+		let rainParticles = [];
+		let mouseRain = { x: W / 2, y: H / 2 };
+
+		function rainColor() {
+			const h = (globalHueShift + (Math.random() - 0.5) * 40) % 360;
+			const [r, g, b] = hsl(h, 0.25 + Math.random() * 0.15, 0.45 + Math.random() * 0.25);
+			return `rgb(${(r*255)|0},${(g*255)|0},${(b*255)|0})`;
+		}
+
+		class RainPixel {
+			constructor(x, y) {
+				this.x = x + (Math.random() - 0.5) * 30;
+				this.y = y;
+				this.vx = (Math.random() - 0.5) * 0.8;
+				this.vy = 1.5 + Math.random() * 3.5;
+				this.size = 2 + Math.floor(Math.random() * 3);
+				this.color = rainColor();
+				this.life = 1;
+				this.decay = 0.004 + Math.random() * 0.008;
+			}
+			update() {
+				this.x += this.vx;
+				this.y += this.vy;
+				this.vy += 0.08;
+				this.life -= this.decay;
+			}
+		}
+
+		let rainRaf = null;
+		function animateRain() {
+			if (mode !== 'rain') return;
+			rainRaf = requestAnimationFrame(animateRain);
+
+			for (let i = 0; i < 4; i++) rainParticles.push(new RainPixel(mouseRain.x, mouseRain.y));
+
+			rc.fillStyle = 'rgba(48,51,44,0.18)';
+			rc.fillRect(0, 0, rainCanvas.width, rainCanvas.height);
+
+			rainParticles = rainParticles.filter(p => p.life > 0 && p.y < rainCanvas.height + 20);
+			for (const p of rainParticles) {
+				p.update();
+				rc.globalAlpha = p.life * 0.9;
+				rc.fillStyle = p.color;
+				rc.fillRect(p.x | 0, p.y | 0, p.size, p.size);
+			}
+			rc.globalAlpha = 1;
+		}
+
+		window.addEventListener('click', () => {
+			if (mode === 'webgl') {
+				mode = 'rain';
+				rainCanvas.width = W;
+				rainCanvas.height = H;
+				rainParticles = [];
+				rc.fillStyle = '#30332c';
+				rc.fillRect(0, 0, W, H);
+				rainCanvas.style.display = 'block';
+				animateRain();
+			} else {
+				mode = 'webgl';
+				rainCanvas.style.display = 'none';
+				if (rainRaf) { cancelAnimationFrame(rainRaf); rainRaf = null; }
+			}
+		});
+
+		rainCanvas.addEventListener('mousemove', e => { mouseRain.x = e.clientX; mouseRain.y = e.clientY; });
+		rainCanvas.addEventListener('touchmove', e => {
+			e.preventDefault();
+			mouseRain.x = e.touches[0].clientX;
+			mouseRain.y = e.touches[0].clientY;
+		}, { passive: false });
+		// ────────────────────────────────────────────────────────────────────────
+
 		let prev = performance.now();
 		function animate(now) {
 			requestAnimationFrame(animate);
+			globalHueShift = (globalHueShift + 0.015) % 360;
 			const dt = Math.min((now - prev) / 1000, 0.016) * CFG.DT_SCALE;
 			prev = now;
 			step(dt);
